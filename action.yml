@@ -1,0 +1,35 @@
+name: "push-sync-template"
+author: "patacoing"
+description: "Push updates from a template repository to repositories that have been created from it."
+
+inputs:
+  organization:
+    description: "GitHub organization name."
+    required: true
+  template_repository_name:
+    description: "Template repository name."
+    required: true
+  commit_message:
+    description: "Commit message for the sync operation."
+    required: false
+  pr_title:
+    description: "Pull request title."
+    required: false
+  pr_body:
+    description: "Pull request body."
+    required: false
+  default_reviewers:
+    description: "Default reviewers for the pull request. Specify GitHub usernames separated by commas."
+    required: false
+  request_review_from_copilot:
+    description: "Request review from GitHub Copilot. Set to true to enable Copilot review requests."
+    required: false
+    
+
+runs:
+  using: "composite"
+  steps:
+    - name: Sync repositories
+      shell: bash
+      id: sync
+      run: sync_repositories "${{ inputs.organization }}" "${{ inputs.template_repository_name }}" "${{ inputs.commit_message }}" "${{ inputs.pr_title }}" "${{ inputs.pr_body }}" "${{ inputs.default_reviewers }}" "${{ inputs.request_review_from_copilot }}"
