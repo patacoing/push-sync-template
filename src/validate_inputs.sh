@@ -1,5 +1,17 @@
 #!/bin/bash
 
+#######################################
+# Validate that a single input parameter is not empty.
+# Globals:
+#   None
+# Arguments:
+#   input_name: The name of the input parameter for error messages
+#   input_value: The value to validate
+# Outputs:
+#   Writes error message to stdout if input is empty
+# Returns:
+#   0 if input is valid (not empty), 1 otherwise
+#######################################
 function validate_input {
 	local input_name=$1
 	local input_value=$2
@@ -10,6 +22,21 @@ function validate_input {
 	fi
 }
 
+#######################################
+# Validate all required input parameters for the sync operation.
+# Ensures that organization, template repository name, and GitHub PAT
+# are all provided and not empty.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   template_repository_name: The name of the template repository
+#   github_pat: The GitHub Personal Access Token
+# Outputs:
+#   Writes error messages to stdout for any missing inputs
+# Returns:
+#   0 if all inputs are valid, 1 otherwise
+#######################################
 function validate_inputs {
 	local organization=$1
 	local template_repository_name=$2

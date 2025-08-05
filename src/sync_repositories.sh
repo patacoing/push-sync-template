@@ -1,5 +1,35 @@
 #!/bin/bash
 
+#######################################
+# Template Repository Synchronization Script
+#
+# This script synchronizes changes from a template repository to all
+# repositories that were created from that template within a GitHub organization.
+# It creates pull requests with the template updates for each child repository.
+#
+# Required Environment Variables:
+#   ORGANIZATION: GitHub organization name
+#   TEMPLATE_REPOSITORY_NAME: Name of the template repository
+#   GITHUB_PAT: GitHub Personal Access Token
+#
+# Optional Environment Variables:
+#   COMMIT_MESSAGE: Custom commit message (default: auto-generated)
+#   PR_TITLE: Custom PR title (default: auto-generated)
+#   PR_BODY: Custom PR body (default: auto-generated)
+#   DEFAULT_REVIEWERS: Comma-separated list of reviewers
+#   REQUEST_REVIEW_FROM_COPILOT: Request Copilot review (default: false)
+#
+# Globals:
+#   ORGANIZATION, TEMPLATE_REPOSITORY_NAME, COMMIT_MESSAGE, PR_TITLE,
+#   PR_BODY, DEFAULT_REVIEWERS, GITHUB_PAT, REQUEST_REVIEW_FROM_COPILOT
+# Arguments:
+#   None
+# Outputs:
+#   Progress messages and sync results to stdout
+# Returns:
+#   0 on success, 1 on validation failure
+#######################################
+
 source "$(dirname "$0")/utils.sh"
 source "$(dirname "$0")/check_installed_tool.sh"
 source "$(dirname "$0")/validate_inputs.sh"

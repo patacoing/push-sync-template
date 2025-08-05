@@ -1,5 +1,19 @@
 #!/bin/bash
 
+#######################################
+# Generate a unique branch name for template synchronization.
+# Creates a branch name incorporating the latest commit hash from the
+# template repository to ensure uniqueness and traceability.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   template_repository_name: The name of the template repository
+# Outputs:
+#   Prints the generated branch name to stdout
+# Returns:
+#   0 on success
+#######################################
 function get_branch_name {
 	local organization=$1
 	local template_repository_name=$2
@@ -12,6 +26,20 @@ function get_branch_name {
 	echo "$branch_name"
 }
 
+#######################################
+# Find all repositories that use a specific template repository.
+# Uses GitHub CLI to query the organization's repositories and filter
+# those that were created from the specified template.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   template_repository_name: The name of the template repository
+# Outputs:
+#   Prints repository names to stdout, one per line
+# Returns:
+#   0 on success
+#######################################
 function find_children_repositories {
 	local organization=$1
 	local template_repository_name=$2
@@ -21,6 +49,27 @@ function find_children_repositories {
 		--jq '.[] | select(.templateRepository.name == "'"$template_repository_name"'") | .name'
 }
 
+#######################################
+# Synchronize template changes to all child repositories.
+# Main orchestration function that finds all repositories using the template
+# and applies template updates to each one via pull requests.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   template_repository_name: The name of the template repository
+#   branch_name: The branch name to use for sync commits
+#   commit_message: The commit message for sync changes
+#   template_repository_path: The Git URL of the template repository
+#   pr_title: The title for pull requests
+#   pr_body: The body text for pull requests
+#   default_reviewers: Comma-separated list of default reviewers
+#   request_review_from_copilot: Boolean flag to request Copilot review
+# Outputs:
+#   Progress messages and repository sync status to stdout
+# Returns:
+#   0 on success
+#######################################
 function sync_repositories {
 	local organization=$1
 	local template_repository_name=$2
@@ -65,12 +114,36 @@ function sync_repositories {
 	cd ../
 }
 
+#######################################
+# Create a complete Git repository name in org/repo format.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   repository_name: The repository name
+# Outputs:
+#   Prints the complete repository name to stdout
+# Returns:
+#   0 on success
+#######################################
 function get_git_complete_name {
 	local organization=$1
 	local repository_name=$2
 	echo "$organization/$repository_name"
 }
 
+#######################################
+# Generate the HTTPS Git URL for a template repository.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   template_repository_name: The name of the template repository
+# Outputs:
+#   Prints the HTTPS Git URL to stdout
+# Returns:
+#   0 on success
+#######################################
 function get_template_repository_path {
 	local organization=$1
 	local template_repository_name=$2
@@ -80,15 +153,59 @@ function get_template_repository_path {
 	echo "https://github.com/$template_repository_complete_name.git"
 }
 
+#######################################
+# Check if a Git branch exists in the remote repository.
+# Globals:
+#   None
+# Arguments:
+#   branch_name: The name of the branch to check
+# Outputs:
+#   None
+# Returns:
+#   0 if branch exists, 1 otherwise
+#######################################
 function check_if_git_branch_exists {
 	local branch_name=$1
 	git show-ref --verify --quiet "refs/remotes/origin/$branch_name"
 }
 
+#######################################
+# Check if there are staged changes in the current Git repository.
+# Globals:
+#   None
+# Arguments:
+#   None
+# Outputs:
+#   None
+# Returns:
+#   0 if there are staged changes, 1 otherwise
+#######################################
 function has_staged_changes {
 	! git diff --quiet --cached
 }
 
+#######################################
+# Synchronize a single repository with template changes.
+# Clones the child repository, creates a new branch, merges template changes,
+# commits the changes, and creates a pull request.
+# Globals:
+#   None
+# Arguments:
+#   organization: The GitHub organization name
+#   child_repository: The name of the child repository to sync
+#   branch_name: The branch name to use for sync commits
+#   commit_message: The commit message for sync changes
+#   template_repository_name: The name of the template repository
+#   template_repository_path: The Git URL of the template repository
+#   pr_title: The title for the pull request
+#   pr_body: The body text for the pull request
+#   default_reviewers: Comma-separated list of default reviewers
+#   request_review_from_copilot: Boolean flag to request Copilot review
+# Outputs:
+#   Progress messages and sync status to stdout
+# Returns:
+#   0 on successful sync, 1 if sync was skipped or failed
+#######################################
 function sync_repository {
 	local organization=$1
 	local child_repository=$2
@@ -139,6 +256,25 @@ function sync_repository {
 	cd ../
 }
 
+#######################################
+# Create a pull request with optional Copilot review.
+# Creates a pull request for the synchronized changes and optionally
+# requests a review from GitHub Copilot using a workaround for the CLI limitation.
+# Globals:
+#   None
+# Arguments:
+#   pr_title: The title for the pull request
+#   pr_body: The body text for the pull request
+#   template_repository_name: The name of the template repository
+#   branch_name: The branch name containing the changes
+#   child_repository_complete_name: The full name (org/repo) of the child repository
+#   default_reviewers: Comma-separated list of default reviewers
+#   request_review_from_copilot: Boolean flag to request Copilot review
+# Outputs:
+#   Pull request URL and review status messages to stdout
+# Returns:
+#   0 on success
+#######################################
 function create_pull_request {
 	local pr_title=$1
 	local pr_body=$2
