@@ -24,12 +24,26 @@ inputs:
   request_review_from_copilot:
     description: "Request review from GitHub Copilot. Set to true to enable Copilot review requests."
     required: false
+  github_pat:
+    description: "GitHub Personal Access Token (PAT) with: 
+                 - `repo` scope for private repositories,
+                 - `workflow` scope for workflow dispatch,
+                 - `admin:org` scope for organization access."
+    required: true
     
-
 runs:
   using: "composite"
   steps:
     - name: Sync repositories
+      env:
+        GITHUB_PAT: ${{ inputs.github_pat }}
+        TEMPLATE_REPOSITORY_NAME: ${{ inputs.template_repository_name }}
+        COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        PR_TITLE: ${{ inputs.pr_title }}
+        PR_BODY: ${{ inputs.pr_body }}
+        DEFAULT_REVIEWERS: ${{ inputs.default_reviewers }}
+        REQUEST_REVIEW_FROM_COPILOT: ${{ inputs.request_review_from_copilot }}
+        ORGANIZATION: ${{ inputs.organization }}
       shell: bash
       id: sync
-      run: sync_repositories "${{ inputs.organization }}" "${{ inputs.template_repository_name }}" "${{ inputs.commit_message }}" "${{ inputs.pr_title }}" "${{ inputs.pr_body }}" "${{ inputs.default_reviewers }}" "${{ inputs.request_review_from_copilot }}"
+      run: src/sync_repositories.sh
