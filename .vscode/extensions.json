@@ -1,0 +1,12 @@
+{
+    "recommendations": [
+        "timonwong.shellcheck",
+        "rogalmic.bash-debug",
+        "ms-vscode-remote.remote-containers",
+        "ms-vscode.makefile-tools",
+        "yzhang.markdown-all-in-one",
+        "ms-vscode-remote.remote-ssh",
+        "redhat.vscode-yaml",
+        "github.vscode-github-actions"
+    ]
+}

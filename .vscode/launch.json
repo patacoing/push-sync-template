@@ -1,0 +1,22 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "type": "bashdb",
+            "request": "launch",
+            "name": "Bash-Debug sync_repositories.sh",
+            "cwd": "${workspaceFolder}",
+            "program": "${workspaceFolder}/src/sync_repositories.sh",
+            "terminalKind": "integrated",
+            "env": {
+                "ORGANIZATION": "patacoing",
+                "TEMPLATE_REPOSITORY_NAME": "test-template",
+                "GITHUB_PAT": "your-github-personal-access-token"
+            },
+        },
+    ]
+}

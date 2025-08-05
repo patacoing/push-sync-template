@@ -1,0 +1,22 @@
+{
+    "name": "push-sync-template dev container",
+    "build": {
+      "dockerfile": "Dockerfile"
+    },
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "yzhang.markdown-all-in-one",
+          "github.vscode-github-actions",
+          "timonwong.shellcheck",
+          "redhat.vscode-yaml"
+          // This isn't supported yet in dev containers https://github.com/rogalmic/vscode-bash-debug/issues/101
+          // "rogalmic.bash-debug",
+        ]
+      }
+    },
+    "mounts": [
+      "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.ssh,target=/root/.ssh,readonly",
+      "type=bind,source=${localEnv:HOME}${localEnv:USERPROFILE}/.gitconfig,target=/root/.gitconfig,readonly"
+    ]
+}
