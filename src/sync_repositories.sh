@@ -1,27 +1,34 @@
 #!/bin/bash
 
 source "$(dirname "$0")/utils.sh"
+source "$(dirname "$0")/check_installed_tool.sh"
+source "$(dirname "$0")/validate_inputs.sh"
 
-ORGANIZATION=$1
-TEMPLATE_REPOSITORY_NAME=$2
-COMMIT_MESSAGE=${3:-"Sync template $TEMPLATE_REPOSITORY_NAME with latest changes"}
-PR_TITLE=${4:-"Sync template $TEMPLATE_REPOSITORY_NAME"}
-PR_BODY=${5:-"This PR syncs the template repository '$TEMPLATE_REPOSITORY_NAME' with the latest changes."}
-DEFAULT_REVIEWERS=${6}
-REQUEST_REVIEW_FROM_COPILOT=${7:-false}
+# shellcheck disable=SC2269
+ORGANIZATION=${ORGANIZATION}
+# shellcheck disable=SC2269
+TEMPLATE_REPOSITORY_NAME=${TEMPLATE_REPOSITORY_NAME}
+COMMIT_MESSAGE=${COMMIT_MESSAGE:-"Sync template $TEMPLATE_REPOSITORY_NAME with latest changes"}
+PR_TITLE=${PR_TITLE:-"Sync template $TEMPLATE_REPOSITORY_NAME"}
+PR_BODY=${PR_BODY:-"This PR syncs the template repository '$TEMPLATE_REPOSITORY_NAME' with the latest changes."}
+DEFAULT_REVIEWERS=${DEFAULT_REVIEWERS:-""}
+# shellcheck disable=SC2269
+GITHUB_PAT=${GITHUB_PAT}
+REQUEST_REVIEW_FROM_COPILOT=${REQUEST_REVIEW_FROM_COPILOT:-false}
 
-if [ -z "$ORGANIZATION" ]; then
-	echo "Usage: $0 <organization> <template-repository-name>"
-	exit 1
-fi
+validate_inputs "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME" "$GITHUB_PAT" || exit 1
+check_required_tools || exit 1
 
-if [ -z "$TEMPLATE_REPOSITORY_NAME" ]; then
-	echo "Usage: $0 <organization> <template-repository-name>"
-	exit 1
-fi
+TEMPLATE_REPOSITORY_PATH=$(get_template_repository_path "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
+BRANCH_NAME=$(get_branch_name "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
 
-TEMPLATE_REPOSITORY_COMPLETE_NAME=$(get_git_complete_name "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
-TEMPLATE_REPOSITORY_PATH="https://github.com/$TEMPLATE_REPOSITORY_COMPLETE_NAME.git"
-BRANCH_NAME=$(get_branch_name)
-
-sync_repositories "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME" "$BRANCH_NAME" "$COMMIT_MESSAGE" "$TEMPLATE_REPOSITORY_PATH" "$PR_TITLE" "$PR_BODY" "$DEFAULT_REVIEWERS" "$REQUEST_REVIEW_FROM_COPILOT"
+sync_repositories \
+	"$ORGANIZATION" \
+	"$TEMPLATE_REPOSITORY_NAME" \
+	"$BRANCH_NAME" \
+	"$COMMIT_MESSAGE" \
+	"$TEMPLATE_REPOSITORY_PATH" \
+	"$PR_TITLE" \
+	"$PR_BODY" \
+	"$DEFAULT_REVIEWERS" \
+	"$REQUEST_REVIEW_FROM_COPILOT"
