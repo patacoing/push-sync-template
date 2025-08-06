@@ -1,6 +1,9 @@
 name: "push-sync-template"
 author: "patacoing"
 description: "Push updates from a template repository to repositories that have been created from it."
+branding:
+  icon: "activity"
+  color: "white"
 
 inputs:
   organization:
