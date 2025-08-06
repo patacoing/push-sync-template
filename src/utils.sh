@@ -312,8 +312,6 @@ function create_pull_request {
 
 #######################################
 # Authenticate with GitHub using a Personal Access Token.
-# Uses the GitHub CLI to authenticate with a provided PAT by piping
-# the token to the gh auth login command with the --with-token flag.
 # Globals:
 #   None
 # Arguments:
@@ -327,4 +325,6 @@ function github_login {
 	local github_pat=$1
 
 	echo "$github_pat" | gh auth login --with-token
+	git config --global credential.helper store
+	echo "https://x-access-token:${github_pat}@github.com" >~/.git-credentials
 }
