@@ -309,3 +309,22 @@ function create_pull_request {
 		echo "Review requested from Copilot for PR #$pr_number in $child_repository_complete_name"
 	fi
 }
+
+#######################################
+# Authenticate with GitHub using a Personal Access Token.
+# Uses the GitHub CLI to authenticate with a provided PAT by piping
+# the token to the gh auth login command with the --with-token flag.
+# Globals:
+#   None
+# Arguments:
+#   github_pat: The GitHub Personal Access Token for authentication
+# Outputs:
+#   Authentication status messages from gh CLI to stdout
+# Returns:
+#   0 on successful authentication, non-zero on failure
+#######################################
+function github_login {
+	local github_pat=$1
+
+	echo "$github_pat" | gh auth login --with-token
+}
