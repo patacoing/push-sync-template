@@ -49,4 +49,4 @@ runs:
         ORGANIZATION: ${{ inputs.organization }}
       shell: bash
       id: sync
-      run: src/sync_repositories.sh
+      run: ${{ github.action_path }}/src/sync_repositories.sh
