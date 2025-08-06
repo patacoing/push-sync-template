@@ -47,6 +47,7 @@ runs:
         DEFAULT_REVIEWERS: ${{ inputs.default_reviewers }}
         REQUEST_REVIEW_FROM_COPILOT: ${{ inputs.request_review_from_copilot }}
         ORGANIZATION: ${{ inputs.organization }}
+        GITHUB_ACTOR: ${{ github.actor }}
       shell: bash
       id: sync
       run: ${{ github.action_path }}/src/sync_repositories.sh

@@ -44,12 +44,16 @@ PR_BODY=${PR_BODY:-"This PR syncs the template repository '$TEMPLATE_REPOSITORY_
 DEFAULT_REVIEWERS=${DEFAULT_REVIEWERS:-""}
 # shellcheck disable=SC2269
 GITHUB_PAT=${GITHUB_PAT}
+GIT_USER_NAME=${GITHUB_ACTOR}
+GIT_USER_EMAIL="github-action@push-sync-template.noreply.github.com"
 REQUEST_REVIEW_FROM_COPILOT=${REQUEST_REVIEW_FROM_COPILOT:-false}
 
 validate_inputs "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME" "$GITHUB_PAT" || exit 1
 check_required_tools || exit 1
 
 github_login "$GITHUB_PAT" || exit 1
+
+git_config "$GITHUB_PAT" "$GIT_USER_NAME" "$GIT_USER_EMAIL" || exit 1
 
 TEMPLATE_REPOSITORY_PATH=$(get_template_repository_path "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
 BRANCH_NAME=$(get_branch_name "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")

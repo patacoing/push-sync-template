@@ -324,7 +324,33 @@ function create_pull_request {
 function github_login {
 	local github_pat=$1
 
-	echo "$github_pat" | gh auth login --with-token
+	echo "$github_pat" | gh auth login --with-token	
+}
+
+#######################################
+# Configure Git global settings for authentication and user identity.
+# Sets up Git credential helper to store credentials securely, configures
+# GitHub authentication using a Personal Access Token, and sets the global
+# Git user name and email for commits.
+# Globals:
+#   None
+# Arguments:
+#   github_pat: The GitHub Personal Access Token for authentication
+#   git_user_name: The Git user name to set globally
+#   git_user_email: The Git user email to set globally
+# Outputs:
+#   None
+# Returns:
+#   0 on success
+#######################################
+function git_config {
+	local github_pat=$1
+	local git_user_name=$2
+	local git_user_email=$3
+
 	git config --global credential.helper store
 	echo "https://x-access-token:${github_pat}@github.com" >~/.git-credentials
+
+	git config --global user.name "$git_user_name"
+	git config --global user.email "$git_user_email"
 }
