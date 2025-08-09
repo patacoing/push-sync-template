@@ -13,13 +13,26 @@ inputs:
     description: "Template repository name."
     required: true
   commit_message:
-    description: "Commit message for the sync operation."
+    description: "Commit message for the sync operation. If not provided, a default message will be used. You can use the following variables in the message:
+                 - `${template_repository_name}`: Name of the template repository
+                 - `${branch_name}`: Name of the branch being created
+                 - `${latest_template_commit}`: Latest commit hash of the template repository"
+    required: false
+  branch_name:
+    description: "Branch name for the sync operation. If not provided, a default branch name will be generated based on the latest commit of the template repository. You can use the following variables in the branch name:
+                 - `${template_repository_name}`: Name of the template repository
+                 - `${latest_template_commit}`: Latest commit hash of the template repository"
     required: false
   pr_title:
-    description: "Pull request title."
+    description: "Pull request title. If not provided, a default title will be used. You can use the following variables in the title:
+                 - `${template_repository_name}`: Name of the template repository
+                 - `${branch_name}`: Name of the branch being created"
     required: false
   pr_body:
-    description: "Pull request body."
+    description: "Pull request body. If not provided, a default body will be used. You can use the following variables in the body:
+                 - `${template_repository_name}`: Name of the template repository
+                 - `${branch_name}`: Name of the branch being created
+                 - `${latest_template_commit}`: Latest commit hash of the template repository"
     required: false
   default_reviewers:
     description: "Default reviewers for the pull request. Specify GitHub usernames separated by commas."
@@ -42,6 +55,7 @@ runs:
         GITHUB_PAT: ${{ inputs.github_pat }}
         TEMPLATE_REPOSITORY_NAME: ${{ inputs.template_repository_name }}
         COMMIT_MESSAGE: ${{ inputs.commit_message }}
+        BRANCH_NAME: ${{ inputs.branch_name }}
         PR_TITLE: ${{ inputs.pr_title }}
         PR_BODY: ${{ inputs.pr_body }}
         DEFAULT_REVIEWERS: ${{ inputs.default_reviewers }}

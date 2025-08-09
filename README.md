@@ -28,17 +28,28 @@ The push model ensures that:
 
 ## 📋 Inputs
 
-| Input                         | Description                                                  | Required | Default                                                                              |
-| ----------------------------- | ------------------------------------------------------------ | -------- | ------------------------------------------------------------------------------------ |
-| `organization`                | GitHub organization name                                     | ✅ Yes    | -                                                                                    |
-| `template_repository_name`    | Name of the template repository                              | ✅ Yes    | -                                                                                    |
-| `commit_message`              | Commit message for the sync operation                        | ❌ No     | `"Sync template {template_name} with latest changes"`                                |
-| `pr_title`                    | Pull request title                                           | ❌ No     | `"Sync template {template_name}"`                                                    |
-| `pr_body`                     | Pull request body                                            | ❌ No     | `"This PR syncs the template repository '{template_name}' with the latest changes."` |
-| `default_reviewers`           | Default reviewers for PRs (comma-separated GitHub usernames) | ❌ No     | -                                                                                    |
-| `request_review_from_copilot` | Request review from GitHub Copilot                           | ❌ No     | `false`                                                                              |
-| `github_pat`                  | Github PAT to open PRs on children repositories              | ✅ Yes    | -                                                                                    |
+| Input                         | Description                                                  | Required | Default                                                                                       | Variables available                                                           |
+| ----------------------------- | ------------------------------------------------------------ | -------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `organization`                | GitHub organization name                                     | ✅ Yes    | -                                                                                             | -                                                                             |
+| `template_repository_name`    | Name of the template repository                              | ✅ Yes    | -                                                                                             | -                                                                             |
+| `commit_message`              | Commit message for the sync operation                        | ❌ No     | "chore(sync-template): synced ${template_repository_name} with latest changes"                | `${template_repository_name}`, `${branch_name}`, `${latest_template_commit}`  |
+| `branch_name`                 | Branch created for the sync operation                        | ❌ No     | "syncing-template-until-${latest_template_commit}"                                            | `${template_repository_name}`, `${latest_template_commit}`                    |
+| `pr_title`                    | Pull request title                                           | ❌ No     | "Sync template {template_repository_name}"                                                    | `${template_repository_name}`, `${branch_name}`                               |
+| `pr_body`                     | Pull request body                                            | ❌ No     | "This PR syncs the template repository '{template_repository_name}' with the latest changes." | `${template_repository_name}`, `${branche_name}`, `${latest_template_commit}` |
+| `default_reviewers`           | Default reviewers for PRs (comma-separated GitHub usernames) | ❌ No     | -                                                                                             | -                                                                             |
+| `request_review_from_copilot` | Request review from GitHub Copilot                           | ❌ No     | false                                                                                         | -                                                                             |
+| `github_pat`                  | Github PAT to open PRs on children repositories              | ✅ Yes    | -                                                                                             | -                                                                             |
 
+
+## 🧮 Interpolation
+
+As you can see in the inputs, you can customize the following inputs : 
+- commit_message
+- branch_name
+- pr_title
+- pr_body
+
+You can check the available variables in the `inputs` section for the input you want to customize. This interpolation allow you to customize the the Pull Request that will be created to your needs (in case you have a Pull Request template for example)
 
 ## 🛠️ Usage
 
@@ -67,3 +78,4 @@ jobs:
 
 - Template sync ignore files are not yet implemented (TODO in the code)
 - PR labels are not yet added automatically (TODO in the code)
+- The children repositories and the template must be in the same organization

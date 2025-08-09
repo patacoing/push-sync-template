@@ -1,29 +1,24 @@
 #!/bin/bash
 
 #######################################
-# Generate a unique branch name for template synchronization.
-# Creates a branch name incorporating the latest commit hash from the
-# template repository to ensure uniqueness and traceability.
+# Function to get the latest commit hash from the template repository.
+# Uses GitHub CLI to fetch the latest commit SHA from the main branch of the template repository
 # Globals:
 #   None
 # Arguments:
 #   organization: The GitHub organization name
 #   template_repository_name: The name of the template repository
 # Outputs:
-#   Prints the generated branch name to stdout
+#   Prints the latest commit hash to stdout
+#   The hash is truncated to the first 8 characters for readability
 # Returns:
 #   0 on success
 #######################################
-function get_branch_name {
+function get_latest_commit {
 	local organization=$1
 	local template_repository_name=$2
-	local latest_template_commit
-	local branch_name
 
-	latest_template_commit=$(gh api repos/"$organization"/"$template_repository_name"/commits --jq '.[0].sha[:8]')
-	branch_name="syncing-template-until-$latest_template_commit"
-
-	echo "$branch_name"
+	gh api repos/"$organization"/"$template_repository_name"/commits --jq '.[0].sha[:8]'
 }
 
 #######################################
@@ -324,7 +319,7 @@ function create_pull_request {
 function github_login {
 	local github_pat=$1
 
-	echo "$github_pat" | gh auth login --with-token	
+	echo "$github_pat" | gh auth login --with-token
 }
 
 #######################################
