@@ -298,7 +298,7 @@ function create_pull_request {
 
 		# Hack to add Copilot as a reviewer because gh CLI does not support adding Copilot as a reviewer directly
 		# Found at https://github.com/cli/cli/issues/10598#issuecomment-2893526162
-		gh alias set --clobber save-me-copilot "api" --method POST /repos/"$1"/pulls/"$2"/requested_reviewers -f "reviewers[]=copilot-pull-request-reviewer[bot]"
+		gh alias set --clobber save-me-copilot "api --method POST /repos/$1/pulls/$2/requested_reviewers -f "reviewers[]=copilot-pull-request-reviewer[bot]""
 		gh save-me-copilot "$child_repository_complete_name" "$pr_number" >/dev/null
 
 		echo "Review requested from Copilot for PR #$pr_number in $child_repository_complete_name"
