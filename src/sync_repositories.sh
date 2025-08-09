@@ -55,8 +55,6 @@ BRANCH_NAME=${BRANCH_NAME:-"syncing-template-until-$LATEST_TEMPLATE_COMMIT"}
 validate_inputs "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME" "$GITHUB_PAT" || exit 1
 check_required_tools || exit 1
 
-github_login "$GITHUB_PAT" || exit 1
-
 git_config "$GITHUB_PAT" "$GIT_USER_NAME" "$GIT_USER_EMAIL" || exit 1
 
 COMMIT_MESSAGE=$(interpolate_commit_message "$COMMIT_MESSAGE" "$TEMPLATE_REPOSITORY_NAME" "$BRANCH_NAME" "$LATEST_TEMPLATE_COMMIT")

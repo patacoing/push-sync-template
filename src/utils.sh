@@ -306,23 +306,6 @@ function create_pull_request {
 }
 
 #######################################
-# Authenticate with GitHub using a Personal Access Token.
-# Globals:
-#   None
-# Arguments:
-#   github_pat: The GitHub Personal Access Token for authentication
-# Outputs:
-#   Authentication status messages from gh CLI to stdout
-# Returns:
-#   0 on successful authentication, non-zero on failure
-#######################################
-function github_login {
-	local github_pat=$1
-
-	echo "$github_pat" | gh auth login --with-token
-}
-
-#######################################
 # Configure Git global settings for authentication and user identity.
 # Sets up Git credential helper to store credentials securely, configures
 # GitHub authentication using a Personal Access Token, and sets the global
