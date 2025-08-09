@@ -14,6 +14,7 @@
 #
 # Optional Environment Variables:
 #   COMMIT_MESSAGE: Custom commit message (default: auto-generated)
+#   BRANCH_NAME: Custom branch name (default: auto-generated based on latest commit)
 #   PR_TITLE: Custom PR title (default: auto-generated)
 #   PR_BODY: Custom PR body (default: auto-generated)
 #   DEFAULT_REVIEWERS: Comma-separated list of reviewers
@@ -33,12 +34,13 @@
 source "$(dirname "$0")/utils.sh"
 source "$(dirname "$0")/check_installed_tool.sh"
 source "$(dirname "$0")/validate_inputs.sh"
+source "$(dirname "$0")/interpolation.sh"
 
 # shellcheck disable=SC2269
 ORGANIZATION=${ORGANIZATION}
 # shellcheck disable=SC2269
 TEMPLATE_REPOSITORY_NAME=${TEMPLATE_REPOSITORY_NAME}
-COMMIT_MESSAGE=${COMMIT_MESSAGE:-"Sync template $TEMPLATE_REPOSITORY_NAME with latest changes"}
+COMMIT_MESSAGE=${COMMIT_MESSAGE:-"chore(sync-template): synced $TEMPLATE_REPOSITORY_NAME with latest changes"}
 PR_TITLE=${PR_TITLE:-"Sync template $TEMPLATE_REPOSITORY_NAME"}
 PR_BODY=${PR_BODY:-"This PR syncs the template repository '$TEMPLATE_REPOSITORY_NAME' with the latest changes."}
 DEFAULT_REVIEWERS=${DEFAULT_REVIEWERS:-""}
@@ -47,6 +49,8 @@ GITHUB_PAT=${GITHUB_PAT}
 GIT_USER_NAME=${GITHUB_ACTOR}
 GIT_USER_EMAIL="github-action@push-sync-template.noreply.github.com"
 REQUEST_REVIEW_FROM_COPILOT=${REQUEST_REVIEW_FROM_COPILOT:-false}
+LATEST_TEMPLATE_COMMIT=$(get_latest_commit "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
+BRANCH_NAME=${BRANCH_NAME:-"syncing-template-until-$LATEST_TEMPLATE_COMMIT"}
 
 validate_inputs "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME" "$GITHUB_PAT" || exit 1
 check_required_tools || exit 1
@@ -55,8 +59,12 @@ github_login "$GITHUB_PAT" || exit 1
 
 git_config "$GITHUB_PAT" "$GIT_USER_NAME" "$GIT_USER_EMAIL" || exit 1
 
+COMMIT_MESSAGE=$(interpolate_commit_message "$COMMIT_MESSAGE" "$TEMPLATE_REPOSITORY_NAME" "$BRANCH_NAME" "$LATEST_TEMPLATE_COMMIT")
+BRANCH_NAME=$(interpolate_branch_name "$BRANCH_NAME" "$TEMPLATE_REPOSITORY_NAME" "$LATEST_TEMPLATE_COMMIT")
+PR_TITLE=$(interpolate_pr_title "$PR_TITLE" "$TEMPLATE_REPOSITORY_NAME" "$BRANCH_NAME")
+PR_BODY=$(interpolate_pr_body "$PR_BODY" "$TEMPLATE_REPOSITORY_NAME" "$BRANCH_NAME" "$LATEST_TEMPLATE_COMMIT")
+
 TEMPLATE_REPOSITORY_PATH=$(get_template_repository_path "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
-BRANCH_NAME=$(get_branch_name "$ORGANIZATION" "$TEMPLATE_REPOSITORY_NAME")
 
 sync_repositories \
 	"$ORGANIZATION" \

@@ -15,7 +15,8 @@
             "env": {
                 "ORGANIZATION": "patacoing",
                 "TEMPLATE_REPOSITORY_NAME": "test-template",
-                "GITHUB_PAT": "your-github-personal-access-token"
+                "GITHUB_PAT": "your-github-personal-access-token",
+                "GITHUB_ACTOR": "patacoing"
             },
         },
     ]
