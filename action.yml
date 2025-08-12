@@ -35,7 +35,7 @@ inputs:
                  - `${latest_template_commit}`: Latest commit hash of the template repository"
     required: false
   default_reviewers:
-    description: "Default reviewers for the pull request. Specify GitHub usernames separated by commas."
+    description: "Default reviewers for the pull request. Specify GitHub usernames separated by commas. Please note that you can't assign the user of the PAT used to run the action as a reviewer."
     required: false
   request_review_from_copilot:
     description: "Request review from GitHub Copilot. Set to true to enable Copilot review requests."
